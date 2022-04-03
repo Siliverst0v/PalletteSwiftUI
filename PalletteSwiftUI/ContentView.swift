@@ -7,15 +7,21 @@
 
 import SwiftUI
 
+class SliderValues: ObservableObject {
+@Published var ewrw = ""
+}
+
 struct ContentView: View {
-    @State private var redSelectedSliderValue = Double.random(in: 0...255)
-    @State private var greenSelectedSliderValue = Double.random(in: 0...255)
-    @State private var blueSelectedSliderValue = Double.random(in: 0...255)
+    
+    @ObservedObject var model = SliderValues()
 
     @State private var inputRedSliderValue = "100"
     @State private var inputGreenSliderValue = "100"
     @State private var inputBlueSliderValue = "100"
 
+    @State private var redSelectedSliderValue = Double.random(in: 0...255)
+    @State private var greenSelectedSliderValue = Double.random(in: 0...255)
+    @State private var blueSelectedSliderValue = Double.random(in: 0...255)
     
     var body: some View {
         ZStack {
@@ -42,7 +48,7 @@ struct ColorSlider: View {
     @Binding var inputValue: String
     var body: some View {
         HStack {
-            Text("\(inputValue)")
+            Text("\(lround(textValue))")
                 .foregroundColor(.white)
             Slider(value: $textValue, in: 0...255, step: 1)
             TextField("0-255", text: $inputValue)
