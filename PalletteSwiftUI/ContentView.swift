@@ -7,14 +7,8 @@
 
 import SwiftUI
 
-class SliderValues: ObservableObject {
-@Published var ewrw = ""
-}
-
 struct ContentView: View {
     
-    @ObservedObject var model = SliderValues()
-
     @State private var inputRedSliderValue = "100"
     @State private var inputGreenSliderValue = "100"
     @State private var inputBlueSliderValue = "100"
@@ -51,9 +45,13 @@ struct ColorSlider: View {
             Text("\(lround(textValue))")
                 .foregroundColor(.white)
             Slider(value: $textValue, in: 0...255, step: 1)
-            TextField("0-255", text: $inputValue)
+            TextField("0-255", text: $inputValue) {
+                guard let value = Double(inputValue) else {return}
+                textValue = value
+            }
                 .foregroundColor(.black)
                 .background(Color.white)
+                .frame(width: 50, height: 30)
                 .cornerRadius(5)
         }
         .padding(.horizontal)
