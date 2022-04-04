@@ -17,18 +17,20 @@ struct ContentView: View {
     @State private var greenSelectedSliderValue = Double.random(in: 0...255)
     @State private var blueSelectedSliderValue = Double.random(in: 0...255)
     
+    @State private var alertPresented = false
+    
     var body: some View {
         ZStack {
-            Color.init(red: 0/255, green: 0/255, blue: 240/255)
+            Color.init(red: 0/255, green: 0/255, blue: 250/255, opacity: 0.8)
                 .ignoresSafeArea()
             VStack {
                 PalletteView(redColor: $redSelectedSliderValue, greenColor: $greenSelectedSliderValue, blueColor: $blueSelectedSliderValue)
                     .padding()
-                ColorSlider(textValue: $redSelectedSliderValue, inputValue: $inputRedSliderValue)
+                ColorSlider(textValue: $redSelectedSliderValue, inputValue: $inputRedSliderValue, alertPresented: $alertPresented)
                     .tint(Color.red)
-                ColorSlider(textValue: $greenSelectedSliderValue, inputValue: $inputGreenSliderValue)
+                ColorSlider(textValue: $greenSelectedSliderValue, inputValue: $inputGreenSliderValue, alertPresented: $alertPresented)
                     .tint(Color.green)
-                ColorSlider(textValue: $blueSelectedSliderValue, inputValue: $inputBlueSliderValue)
+                ColorSlider(textValue: $blueSelectedSliderValue, inputValue: $inputBlueSliderValue, alertPresented: $alertPresented)
                     .tint(Color.blue)
                 Spacer()
             }
@@ -40,6 +42,8 @@ struct ContentView: View {
 struct ColorSlider: View {
     @Binding var textValue: Double
     @Binding var inputValue: String
+    @Binding var alertPresented: Bool
+    
     var body: some View {
         HStack {
             Text("\(lround(textValue))")
@@ -49,9 +53,10 @@ struct ColorSlider: View {
                 guard let value = Double(inputValue) else {return}
                 textValue = value
             }
+            .textFieldStyle(.roundedBorder)
                 .foregroundColor(.black)
                 .background(Color.white)
-                .frame(width: 50, height: 30)
+                .frame(width: 50.0, height: 30.0)
                 .cornerRadius(5)
         }
         .padding(.horizontal)
