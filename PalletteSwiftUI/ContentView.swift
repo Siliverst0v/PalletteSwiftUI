@@ -9,9 +9,9 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State private var inputRedSliderValue = "100"
-    @State private var inputGreenSliderValue = "100"
-    @State private var inputBlueSliderValue = "100"
+    @State private var inputRedSliderValue = ""
+    @State private var inputGreenSliderValue = ""
+    @State private var inputBlueSliderValue = ""
 
     @State private var redSelectedSliderValue = Double.random(in: 0...255)
     @State private var greenSelectedSliderValue = Double.random(in: 0...255)
@@ -24,13 +24,13 @@ struct ContentView: View {
             Color.init(red: 0/255, green: 0/255, blue: 250/255, opacity: 0.8)
                 .ignoresSafeArea()
             VStack {
-                PalletteView(redColor: $redSelectedSliderValue, greenColor: $greenSelectedSliderValue, blueColor: $blueSelectedSliderValue)
+                PalletteView(redColor: redSelectedSliderValue, greenColor: greenSelectedSliderValue, blueColor: blueSelectedSliderValue)
                     .padding()
-                ColorSlider(textValue: $redSelectedSliderValue, inputValue: $inputRedSliderValue, alertPresented: $alertPresented)
+                ColorSlider(sliderValue: $redSelectedSliderValue, inputValue: $inputRedSliderValue)
                     .tint(Color.red)
-                ColorSlider(textValue: $greenSelectedSliderValue, inputValue: $inputGreenSliderValue, alertPresented: $alertPresented)
+                ColorSlider(sliderValue: $greenSelectedSliderValue, inputValue: $inputGreenSliderValue)
                     .tint(Color.green)
-                ColorSlider(textValue: $blueSelectedSliderValue, inputValue: $inputBlueSliderValue, alertPresented: $alertPresented)
+                ColorSlider(sliderValue: $blueSelectedSliderValue, inputValue: $inputBlueSliderValue)
                     .tint(Color.blue)
                 Spacer()
             }
@@ -40,33 +40,49 @@ struct ContentView: View {
 
 
 struct ColorSlider: View {
-    @Binding var textValue: Double
+    @Binding var sliderValue: Double
     @Binding var inputValue: String
-    @Binding var alertPresented: Bool
+    
+    @State private var showAlert = false
     
     var body: some View {
         HStack {
-            Text("\(lround(textValue))")
+            Text("\(lround(sliderValue))")
                 .foregroundColor(.white)
-            Slider(value: $textValue, in: 0...255, step: 1)
-            TextField("0-255", text: $inputValue) {
-                guard let value = Double(inputValue) else {return}
-                textValue = value
-            }
-            .textFieldStyle(.roundedBorder)
-                .foregroundColor(.black)
-                .background(Color.white)
-                .frame(width: 50.0, height: 30.0)
-                .cornerRadius(5)
+                .frame(width: 40)
+            Slider(value: $sliderValue, in: 0...255, step: 1)
+                .onChange(of: sliderValue) { _ in
+                    inputValue = "\(lround(sliderValue))"
+                }
+                .onAppear {
+                    inputValue = "\(lround(sliderValue))"
+                }
+            TextField("", text: $inputValue, onCommit: checkInputValue)
+                .textFieldStyle(.roundedBorder)
+                .frame(width: 55.0, alignment: .trailing)
+                .multilineTextAlignment(.trailing)
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Wrong Format"), message: Text("Please enter value from 0 to 255"))
+                }
         }
         .padding(.horizontal)
+    }
+    
+    private func checkInputValue() {
+        if let value = Int(inputValue), (0...255).contains(value) {
+            self.sliderValue = Double(value)
+            return
+        }
+        showAlert.toggle()
+        inputValue = ""
     }
 }
 
 struct PalletteView: View {
-    @Binding var redColor: Double
-    @Binding var greenColor: Double
-    @Binding var blueColor: Double
+    
+    let redColor: Double
+    let greenColor: Double
+    let blueColor: Double
     
     var body: some View {
                 
@@ -75,8 +91,7 @@ struct PalletteView: View {
             .foregroundColor(.init(red: redColor/255, green: greenColor/255, blue: blueColor/255))
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
-                    .stroke(lineWidth: 4)
-                    .foregroundColor(.white)
+                    .stroke(Color.white, lineWidth: 4)
             )
     }
 }
