@@ -16,9 +16,7 @@ struct ContentView: View {
     @State private var redSelectedSliderValue = Double.random(in: 0...255)
     @State private var greenSelectedSliderValue = Double.random(in: 0...255)
     @State private var blueSelectedSliderValue = Double.random(in: 0...255)
-    
-    @State private var alertPresented = false
-    
+        
     var body: some View {
         ZStack {
             Color.init(red: 0/255, green: 0/255, blue: 250/255, opacity: 0.8)
